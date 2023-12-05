@@ -48,7 +48,7 @@ body {
 span {
       height: 100px;
       width: 100px;
-      background-color: red;
+      background-color: rgb(161, 158, 158);
       border-radius: 50%;
       display: inline-block;
       display: flex;
@@ -63,7 +63,7 @@ span {
 }
 
 
-@keyframes example {
+/* @keyframes example {
       0% {
             background-color: red;
       }
@@ -80,4 +80,4 @@ span {
             background-color: green;
       }
 
-}
+} */
