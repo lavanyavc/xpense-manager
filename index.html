@@ -11,7 +11,7 @@
       <link rel="stylesheet" type="text/css" href="./assets/custom/css/style.css">
 </head>
 
-<body>
+<body class="bg-primary p-3">
       <div id="main-wrapper" class="container">
             <div class="row justify-content-center">
                   <div class="col-md-4">
@@ -29,33 +29,37 @@
                                                             <div class="form-group">
                                                                   <div class="row form-floating">
                                                                         <input type="email" class="form-control"
-                                                                              id="email" placeholder="email" value=""
-                                                                              onkeyup="updatedEmail(this)">
+                                                                              id="email" placeholder="email"
+                                                                              onkeyup="updateLogo(this)"
+                                                                              autocomplete="true"
+                                                                              value="advith@gmail.com">
                                                                         <label for="email">Email
                                                                         </label>
                                                                   </div><br>
                                                                   <div class="row form-floating">
                                                                         <input type="password" class="form-control"
-                                                                              id="password" placeholder="password">
+                                                                              id="password" placeholder="password"
+                                                                              value="Advith@12">
                                                                         <label for="password">Password</label>
 
 
                                                                   </div><br>
                                                                   <div class="row">
                                                                         <div class="col-md-12">Forgot Password? <a
-                                                                                    href=" #1"
-                                                                                    class="reset-link float-right text-primary1">
+                                                                                    href="./reset.html"
+                                                                                    class="reset-link float-right text-primary">
                                                                                     Reset</a>
                                                                         </div>
                                                                   </div><br>
 
                                                                   <div class="row">
-                                                                        <button class="btn btn-primary">Login</button>
+                                                                        <input type="button" class="btn btn-primary"
+                                                                              value="Login" onclick="login();">
                                                                   </div><br>
                                                                   <div class="row">
                                                                         <div class="col-md-12 text-center">New User ?
-                                                                              <a href=" #1"
-                                                                                    class="reset-link float-right text-primary1">
+                                                                              <a href="./register.html"
+                                                                                    class="reset-link float-right text-primary">
                                                                                     Register</a>
                                                                         </div>
                                                                   </div>

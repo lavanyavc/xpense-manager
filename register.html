@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      <title>Expense Manager</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width" ,initial-scale="1" ,shrink-to-fit="no">
+
+      <!-- css link -->
+      <link rel="stylesheet" type="text/css" href="./assets/bootstrap/css/bootstrap.min.css">
+      <link rel="stylesheet" type="text/css" href="./assets/custom/css/style.css">
+</head>
+
+<body class="bg-primary">
+      <div id="main-wrapper" class="container">
+            <div class="row justify-content-center">
+                  <div class="col-md-4">
+                        <div class="card border-0">
+                              <div class="card-body p-0">
+                                    <div class="row no-gutters">
+                                          <div class="col-sm-12">
+                                                <div class="p-5">
+                                                      <form action="register.php" method="post" id="registerForm">
+                                                            <div class="form-group">
+                                                                  <div class="row form-floating">
+                                                                        <input type="text" class="form-control"
+                                                                              id="name" name="name"
+                                                                              placeholder="Full Name"
+                                                                              autocomplete="true">
+                                                                        <label for="name">Full Name
+                                                                        </label>
+                                                                  </div><br>
+                                                                  <div class="row form-floating">
+                                                                        <input type="text" class="form-control"
+                                                                              id="mobile" name="mobile"
+                                                                              placeholder="Mobile Number"
+                                                                              autocomplete="true">
+                                                                        <label for="mobile">Mobile Number
+                                                                        </label>
+                                                                  </div><br>
+                                                                  <div class="row form-floating">
+                                                                        <input type="email" class="form-control"
+                                                                              id="email" name="email"
+                                                                              placeholder="Email" autocomplete="true">
+                                                                        <label for="email">Email
+                                                                        </label>
+                                                                  </div><br>
+                                                                  <div class="row form-floating">
+                                                                        <input type="password" class="form-control"
+                                                                              id="password" name="password"
+                                                                              placeholder="Password">
+                                                                        <label for="password">Password</label>
+                                                                  </div><br>
+                                                                  <div class="row form-floating">
+                                                                        <input type="password" class="form-control"
+                                                                              id="c-password" name="c-password"
+                                                                              placeholder="Confirm Password">
+                                                                        <label for="c-password">Confirm Password</label>
+                                                                  </div><br>
+
+                                                                  <div class="row">
+                                                                        <input type="button" class="btn btn-primary"
+                                                                              onclick="register();" value="Register">
+                                                                  </div><br>
+                                                                  <div class="row">
+                                                                        <div class="col-md-12 text-center">Already an
+                                                                              user ?
+                                                                              <a href="./index.html" class="reset-link float-right
+                                                                                    text-primary">
+                                                                                    Login</a>
+                                                                        </div>
+                                                                  </div>
+
+                                                            </div><br>
+                                                      </form>
+
+                                                </div>
+
+                                                <!-- </form> -->
+                                          </div>
+                                    </div>
+
+                              </div>
+
+                        </div>
+                        <!-- end card-body -->
+                  </div> <!-- end row -->
+
+            </div>
+            <!-- end col -->
+      </div>
+      <!-- Row -->
+      </div>
+
+</body>
+
+<!-- js link -->
+<script src="./assets/jquery/jquery-3.7.1.min.js" type="text/javascript"></script>
+<script src="./assets/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="./assets/custom/js/script.js" type="text/javascript"></script>
+
+</html>
