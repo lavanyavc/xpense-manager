@@ -1,0 +1,95 @@
+@-webkit-keyframes fadein {
+    from {top: 0; opacity: 0;} 
+    to {top: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {top: 0; opacity: 0;}
+    to {top: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {top: 30px; opacity: 1;} 
+    to {top: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {top: 30px; opacity: 1;}
+    to {top: 0; opacity: 0;}
+}
+
+/* Process Loader */
+.atLoader {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+}
+
+.atLoader1 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/01.gif') 50% 50% no-repeat;
+}
+
+.atLoader2 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/02.gif') 50% 50% no-repeat;
+}
+
+.atLoader3 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/03.gif') 50% 50% no-repeat;
+}
+
+.atLoader4 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/04.gif') 50% 50% no-repeat;
+}
+
+.atLoader5 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/05.gif') 50% 50% no-repeat;
+}
+
+.atLoader6 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/06.gif') 50% 50% no-repeat;
+}
+
+.atLoader7 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/07.gif') 50% 50% no-repeat;
+}
+
+.atLoader8 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/08.gif') 50% 50% no-repeat;
+}
+
+.atLoader9 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/09.gif') 50% 50% no-repeat;
+}
+
+.atLoader10 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/10.gif') 50% 50% no-repeat;
+}
+
+.atLoader11 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/11.gif') 50% 50% no-repeat;
+}
+
+.atLoader12 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/12.gif') 50% 50% no-repeat;
+}
+
+.atLoader13 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/13.gif') 50% 50% no-repeat;
+}
+
+.atLoader14 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/14.gif') 50% 50% no-repeat;
+}
+
+.atLoader15 {
+    background: rgba( 255, 255, 255, .8 ) url('./images/loaders/15.gif') 50% 50% no-repeat;
+}
+
+body.loading [class*='atLoader'] {
+    overflow: hidden;   
+    display: block;
+}
