@@ -9,10 +9,10 @@ var ALPHA_KEY_I = 73;
 var XHRObj = false;
 var isDebug = true;
 var PARSEERR = "Server response failure.";
-var MOBILEPATTERN = /^[0-9]{10}$/;
-var EMAILPATTERN = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-var USERNAMEPATTERN = /^[a-z0-9-]+([-_\.]?[a-z0-9]+)+$/;
-var PASSWORDPATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+var MOBILE_PATTERN = /^[0-9]{10}$/;
+var EMAIL_PATTERN = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+var USERNAME_PATTERN = /^[a-z0-9-]+([-_\.]?[a-z0-9]+)+$/;
+var PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
 var core = {
 	goToURL: function (requestedUrl) {
 		window.location.href = requestedUrl;
@@ -84,11 +84,12 @@ var core = {
 		var commonStyle = "<a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>" + displayMsg + "</div>";
 		return (alertStyles[index]) + commonStyle;
 	},
-	getDialogBox: function (dialogTitle, dialogContent, showClose = true) {
-		var closeButton = (showClose ? "<button type='button' class='close' data-dismiss='modal'>&times</button>" : "");
-		var dialogTemplate = "<div class='container'>" +
+	getDialogBox: function (dialogTitle, dialogContent, size = "medium", showClose = true) {
+		var sizeClasses = { small: "modal-sm", medium: "modal-md", large: "modal-lg" };
+		var closeButton = (showClose ? "<button type='button' class='close' onclick='core.closeDialogBox();'>&times</button>" : "");
+		var dialogTemplate = "<div class='test'>" +
 			"<div class='modal fade' id='coreModal' role='dialog'>" +
-			"<div class='modal-dialog modal-lg'>" +
+			"<div class='modal-dialog " + sizeClasses[size] + "'>" +
 			"<div class='modal-content'>" +
 			"<div class='modal-header'><h5 class='modal-title'><b><span id='infoTitle'></span></b></h5>" + closeButton + "</div>" +
 			"<div class='modal-body'><p><span id='infoBody'></span></p></div>" +
@@ -104,7 +105,7 @@ var core = {
 		this.setHTML('infoTitle', dialogTitle);
 		this.setHTML('infoBody', dialogContent);
 		this.setHTML('infoFooter');
-		$('#coreModal').modal({ backdrop: "static" });
+		$('#coreModal').modal('show', { backdrop: "static" });
 		return;
 	},
 	closeDialogBox: function () {
@@ -177,15 +178,15 @@ var core = {
 		}
 		return XHRObj;
 	},
-	execAJAXCall: function (reqHandler, reqData, reqMethod = "GET", isXML = false) {
-		var XHRobj = core.createXHRObj(falseisXML);
+	execAJAX: function (reqHandler, reqData, reqMethod = "GET", isXML = false) {
+		var XHRobj = core.createXHRObj(isXML);
 		if (!XHRobj) {
 			this.sendToConsole("Incompatible to start AJAX Engine");
 			return;
 		}
+		var respObj = false;
 		XHRobj.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
-				var respObj = false;
 				if (isXML) {
 					respObj = this.responseXML;
 				} else {
@@ -200,13 +201,13 @@ var core = {
 		XHRobj.send(reqData);
 		return respObj;
 	},
-	smartAJAX: function (requestHandler, requestData, requestMethod = "GET") {
+	ajax: async function (requestHandler, requestData, requestMethod = "GET") {
 		var respObj;
-		$.ajax({
+		await $.ajax({
 			url: requestHandler,
 			data: requestData,
 			type: requestMethod,
-			async: false,
+			async: true,
 			cache: false,
 			success: function (responseData) { respObj = responseData; },
 			error: function (responseData) { respObj = responseData; }

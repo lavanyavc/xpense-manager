@@ -1,6 +1,7 @@
 let publicPaths = ["/xpense-manager/index.html", "/xpense-manager/register.html", "/xpense-manager/reset.html"]
 let itemsDesign = ["primary", "success", "info", "danger", "warning"];
 
+// Do Defaults on Document Ready
 $(document).ready(async function () {
       let token = localStorage.getItem("authToken");
       if (!token && !publicPaths.includes(window.location.pathname)) {
@@ -17,6 +18,21 @@ $(document).ready(async function () {
       }
 });
 
+// Open the Navigation Menu
+function openNav() {
+      document.getElementById("mySidenav").style.width = "200px";
+      document.getElementById("main").style.marginLeft = "200px";
+      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
+}
+
+// Close the Navigation Menu
+function closeNav() {
+      document.getElementById("mySidenav").style.width = "0";
+      document.getElementById("main").style.marginLeft = "0";
+      document.body.style.backgroundColor = "white";
+}
+
+// Logo Update in Login Screen
 function updateLogo(input) {
       var mailId = document.getElementById("email");
       var displayLetter = document.getElementById("logo");
@@ -30,22 +46,8 @@ function updateLogo(input) {
       }
 }
 
-/* Set the width of the side navigation to 200px and the left margin of the page content to 200px and add a black background color to body */
-function openNav() {
-      document.getElementById("mySidenav").style.width = "200px";
-      document.getElementById("main").style.marginLeft = "200px";
-      document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
-}
-
-/* Set the width of the side navigation to 0 and the left margin of the page content to 0, and the background color of body to white */
-function closeNav() {
-      document.getElementById("mySidenav").style.width = "0";
-      document.getElementById("main").style.marginLeft = "0";
-      document.body.style.backgroundColor = "white";
-}
-
 // Register an user
-function register() {
+async function register() {
       let name = document.getElementById("name").value;
       if (name == "") {
             core.getFlashMsg("WARNING", "Enter valid Name");
@@ -60,21 +62,21 @@ function register() {
       document.getElementById("name").value = name.trim();
 
       let mobile = document.getElementById("mobile").value;
-      let isMatch = mobile.match(/^[0-9]{10}$/);
+      let isMatch = mobile.match(MOBILE_PATTERN);
       if (isMatch == null) {
             core.getFlashMsg("WARNING", "Enter valid mobile number");
             return false;
       }
 
       let email = document.getElementById("email").value;
-      isMatch = email.match(/^\S+@\S+\.\S+$/);
+      isMatch = email.match(EMAIL_PATTERN);
       if (isMatch == null) {
             core.getFlashMsg("WARNING", "Enter valid EmailID");
             return false;
       }
 
       let password = document.getElementById("password").value;
-      isMatch = password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/);
+      isMatch = password.match(PASSWORD_PATTERN);
       if (isMatch == null) {
             core.getFlashMsg("WARNING", "Strong and Valid Password is required");
             return false;
@@ -101,34 +103,20 @@ function register() {
             }
       }
 
-      var XHRobj = core.createXHRObj(false);
-      if (!XHRobj) {
-            core.getFlashMsg("WARNING", "Incompatible to start AJAX Engine");
-            return;
-      }
-
       core.atLoader(true);
-      XHRobj.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                  var respObj = this.responseText;
-                  try {
-                        let response = JSON.parse(respObj);
-                        core.getFlashMsg("WARNING", response['message']);
-                  } catch {
-                        core.getFlashMsg("WARNING", "Something went wrong");
-                  } finally {
-                        core.atLoader(false);
-                  }
-            }
+      let respObj = await core.ajax("/xpense-manager/apis/register.php", JSON.stringify(request), "POST");
+      try {
+            let response = JSON.parse(respObj);
+            core.getFlashMsg("WARNING", response['message']);
+      } catch {
+            core.getFlashMsg("WARNING", "Something went wrong");
+      } finally {
+            core.atLoader(false);
       }
-
-      XHRobj.open("POST", "/xpense-manager/apis/register.php", false);
-      XHRobj.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      XHRobj.send(JSON.stringify(request));
 }
 
 // login an user
-function login() {
+async function login() {
       let email = document.getElementById("email").value;
       if (email == "") {
             core.getFlashMsg("WARNING", "Enter valid EmailID");
@@ -148,49 +136,42 @@ function login() {
             }
       }
 
-      var XHRobj = core.createXHRObj(false);
-      if (!XHRobj) {
-            core.getFlashMsg("WARNING", "Incompatible to start AJAX Engine");
-            return;
-      }
-
-      core.atLoader(true);
-      XHRobj.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                  var respObj = this.responseText;
-                  try {
-                        let response = JSON.parse(respObj);
-                        if (response["code"] == 0) {
-                              localStorage.setItem("authToken", response.data.token);
-                              localStorage.setItem("userName", response.data.name);
-                              window.location.href = "/xpense-manager/dashboard.html";
-                        } else {
-                              core.getFlashMsg("DANGER", (response['message']));
-                        }
-                  } catch {
-                        core.getFlashMsg("WARNING", "Something went wrong");
-                  } finally {
-                        core.atLoader(false);
-                  }
+      let respObj = await core.ajax("/xpense-manager/apis/login.php", JSON.stringify(request), "POST");
+      try {
+            let response = JSON.parse(respObj);
+            if (response["code"] == 0) {
+                  localStorage.setItem("authToken", response.data.token);
+                  localStorage.setItem("userName", response.data.name);
+                  window.location.href = "/xpense-manager/dashboard.html";
+            } else {
+                  core.getFlashMsg("DANGER", (response['message']));
             }
+      } catch {
+            core.getFlashMsg("WARNING", "Something went wrong");
       }
+}
 
-      XHRobj.open("POST", "/xpense-manager/apis/login.php", false);
-      XHRobj.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-      XHRobj.send(JSON.stringify(request));
+// Logout Prompt
+function promptLogout() {
+      let title = "Are you sure ?";
+      let body = "<button class='btn btn-warning mr-3' type='button' onclick='core.closeDialogBox();'>Cancel</button><a class='btn btn-primary' onclick='logout();'>Confirm</a>";
+      core.getDialogBox(title, body, "small", false);
 }
 
 // Logout an User
 function logout() {
+      core.closeDialogBox();
       core.atLoader(true);
       localStorage.removeItem("authToken");
       localStorage.removeItem("userName");
-      core.atLoader(false);
-      window.location.href = "/xpense-manager/index.html";
+      setTimeout(function () {
+            core.atLoader(false);
+            window.location.href = "/xpense-manager/index.html";
+      }, 1000);
 }
 
 // Display List of Groups
-function listGroups() {
+async function listGroups() {
       let searchKey = document.getElementById("searchKey").value;
 
       var request = JSON.stringify({
@@ -204,38 +185,27 @@ function listGroups() {
                   sortOrder: "ASC"
             }
       });
-      var XHRobj = core.createXHRObj(false);
-      if (!XHRobj) {
-            core.getFlashMsg("WARNING", "Incompatible to start AJAX Engine");
-            return;
-      }
 
       core.atLoader(true);
-      XHRobj.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200) {
-                  var respObj = this.responseText;
-                  try {
-                        let response = JSON.parse(respObj);
-                        let groups = response["data"];
-                        let items = "";
-                        let index = 0;
-                        for (let group of groups) {
-                              let groupName = group.name;
-                              let description = group.description;
-                              index = index % itemsDesign.length;
-                              let groupDesign = itemsDesign[index];
-                              index++;
-                              let groupTemplate = "<div class='col-lg-3 mb-4'><div class='card bg-" + groupDesign + " text-white shadow'><div class='card-body'>" + groupName + "<div class='text-white-50 small'>" + description + "</div></div></div></div>";
-                              items += groupTemplate;
-                        }
-                        document.getElementById("listOfGroups").innerHTML = items;
-                  } catch {
-                        core.getFlashMsg("WARNING", "Something went wrong");
-                  } finally {
-                        core.atLoader(false);
-                  }
+      let respObj = await core.ajax("/xpense-manager/apis/groups.php?request=" + request);
+      try {
+            let response = JSON.parse(respObj);
+            let groups = response["data"];
+            let items = "";
+            let index = 0;
+            for (let group of groups) {
+                  let groupDesign = itemsDesign[index++ % itemsDesign.length];
+                  let groupTemplate = "<div class='col-lg-4 mb-4'><div class='card bg-" + groupDesign + " text-white shadow'><div class='card-body' onclick='showGroupDetails(`" + group.id + "`,`" + group.name + "`)'>" + group.name + "<div class='text-white-50 small'>" + group.description + "</div></div></div></div>";
+                  items += groupTemplate;
             }
+            document.getElementById("listOfGroups").innerHTML = items;
+      } catch {
+            core.getFlashMsg("WARNING", "Something went wrong");
+      } finally {
+            core.atLoader(false);
       }
-      XHRobj.open("GET", "/xpense-manager/apis/groups.php?request=" + request, false);
-      XHRobj.send();
+}
+
+function showGroupDetails(id, name) {
+      core.getDialogBox(name, id, "medium");
 }
