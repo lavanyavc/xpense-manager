@@ -88,7 +88,7 @@ async function register() {
             return false;
       }
 
-      var request = {
+      var request = JSON.stringify({
             data: {
                   "name": name,
                   "mobile": mobile,
@@ -101,10 +101,10 @@ async function register() {
                   sortBy: "id",
                   sortOrder: "ASC"
             }
-      }
+      });
 
       core.atLoader(true);
-      let respObj = await core.ajax("/xpense-manager/apis/register.php", JSON.stringify(request), "POST");
+      let respObj = await core.ajax("/xpense-manager/apis/register.php", request, "POST");
       try {
             let response = JSON.parse(respObj);
             core.getFlashMsg("WARNING", response['message']);
@@ -129,14 +129,14 @@ async function login() {
             return false;
       }
 
-      var request = {
+      var request = JSON.stringify({
             data: {
                   "email": email,
                   "password": password
             }
-      }
+      });
 
-      let respObj = await core.ajax("/xpense-manager/apis/login.php", JSON.stringify(request), "POST");
+      let respObj = await core.ajax("/xpense-manager/apis/login.php", request, "POST");
       try {
             let response = JSON.parse(respObj);
             if (response["code"] == 0) {
@@ -206,6 +206,34 @@ async function listGroups() {
       }
 }
 
-function showGroupDetails(id, name) {
-      core.getDialogBox(name, id, "medium");
+async function showGroupDetails(id, name) {
+      let respObj = await core.ajax("/xpense-manager/apis/groupDetails.php?id=" + id);
+      try {
+            let response = JSON.parse(respObj);
+            let expense = response.data.expense;
+            if (response["code"] == 0) {
+                  let name = response.data.group.groupName;
+                  let title = response.data.group.description;
+                  let createdBy = response.data.group.userName;
+                  let createdOn = response.data.group.created_on;
+                  let owner = response.data.group.ownerName;
+                  let month = response.data.expense.month;
+                  let year = response.data.expense.year;
+                  let totalExpense = response.data.expense.total;
+                  let count = response.data.members.count;
+                  let latest = response.data.members.latest;
+                  let body = "Group Name: " + name + "<br>" + "Title: " + title + "<br>" + "Created By: " + createdBy + " | " + "Created On " + createdOn + "<br>" + "Owner: " + owner + " | " + "Since: 2024-Feb-25 " + "<br>" + "Expenses: " + "<br>" + "Month: $" + month + "/-" + " | " + "year: $" + year + "/-" + " | " + "Total: $" + totalExpense + "/-" + "<br>" + "Members :" + count + " people | " + "Latest: " + latest;
+                  // console.log(response.data);
+                  // core.getDialogBox(body, response, "medium");
+                  core.getDialogBox(name, body, "medium");
+            }
+      } catch {
+            core.getFlashMsg("WARNING", "Something went wrong");
+      } finally {
+            core.atLoader(false);
+      }
+
+
+
 }
+
