@@ -210,8 +210,9 @@ async function showGroupDetails(id, name) {
       let respObj = await core.ajax("/xpense-manager/apis/groupDetails.php?id=" + id);
       try {
             let response = JSON.parse(respObj);
-            let expense = response.data.expense;
+            // let expense = response.data.expense;
             if (response["code"] == 0) {
+                  let id = response.data.group.id;
                   let name = response.data.group.groupName;
                   let title = response.data.group.description;
                   let createdBy = response.data.group.userName;
@@ -222,9 +223,7 @@ async function showGroupDetails(id, name) {
                   let totalExpense = response.data.expense.total;
                   let count = response.data.members.count;
                   let latest = response.data.members.latest;
-                  let body = "Group Name: " + name + "<br>" + "Title: " + title + "<br>" + "Created By: " + createdBy + " | " + "Created On " + createdOn + "<br>" + "Owner: " + owner + " | " + "Since: 2024-Feb-25 " + "<br>" + "Expenses: " + "<br>" + "Month: $" + month + "/-" + " | " + "year: $" + year + "/-" + " | " + "Total: $" + totalExpense + "/-" + "<br>" + "Members :" + count + " people | " + "Latest: " + latest;
-                  // console.log(response.data);
-                  // core.getDialogBox(body, response, "medium");
+                  let body = "Group Name: " + name + "<br>" + "Title: " + title + "<br>" + "Created By: " + createdBy + " | " + "Created On " + createdOn + "<br>" + "Owner: " + owner + " | " + "Since: 2024-Feb-25 " + "<br>" + "Expenses: " + "<br>" + "Month: &#8377; " + month + "/-" + " | " + "year: &#8377; " + year + "/-" + " | " + "Total: &#8377; " + totalExpense + "/-" + "<br>" + "Members :" + count + " people | " + "Latest: " + latest + "<br>" + "<br>" + "<button class='btn btn-primary mr-3' type='button' onclick='addUser(`" + id + "`,`" + name + "`);'>+ User</button>";
                   core.getDialogBox(name, body, "medium");
             }
       } catch {
@@ -232,8 +231,24 @@ async function showGroupDetails(id, name) {
       } finally {
             core.atLoader(false);
       }
+}
 
+function addUser(id, name) {
+      let body = "<input type='hidden' id='groupId' value='" + id + "' readonly>";
+      body += "<input type='text' class='form-control' placeholder='Search Users' id='userSearch' onkeyup='searchUsers();' autocomplete='off'><br>";
+      body += "<table class='table table-bordered'>";
+      body += "<tr><th>Name</th><th>Email</th><th>Action</th></tr>";
+      body += "</table>";
+      body += "<span id='userData'></span>";
+      core.getDialogBox("User Add : " + name, body, "medium");
+}
 
-
+function searchUsers() {
+      let searchKey = document.getElementById('userSearch').value;
+      let tableData = "<table class='table table-bordered'>";
+      tableData += "<tr><td>Kishan</td><td>kishan19feb@gmail.com</td><td>+</td><tr>";
+      tableData += "</table>";
+      document.getElementById('userData').innerHTML = tableData;
+      console.log(searchKey);
 }
 
