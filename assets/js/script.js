@@ -104,7 +104,7 @@ async function register() {
       });
 
       core.atLoader(true);
-      let respObj = await core.ajax("/xpense-manager/apis/register.php", request, "POST");
+      let respObj = await core.ajax("/xpense-manager/apis/user/register.php", request, "POST");
       try {
             let response = JSON.parse(respObj);
             core.getFlashMsg("WARNING", response['message']);
@@ -136,7 +136,7 @@ async function login() {
             }
       });
 
-      let respObj = await core.ajax("/xpense-manager/apis/login.php", request, "POST");
+      let respObj = await core.ajax("/xpense-manager/apis/user/login.php", request, "POST");
       try {
             let response = JSON.parse(respObj);
             if (response["code"] == 0) {
@@ -187,7 +187,7 @@ async function listGroups() {
       });
 
       core.atLoader(true);
-      let respObj = await core.ajax("/xpense-manager/apis/groups.php?request=" + request);
+      let respObj = await core.ajax("/xpense-manager/apis/group/list.php?request=" + request);
       try {
             let response = JSON.parse(respObj);
             let groups = response["data"];
@@ -195,7 +195,7 @@ async function listGroups() {
             let index = 0;
             for (let group of groups) {
                   let groupDesign = itemsDesign[index++ % itemsDesign.length];
-                  let groupTemplate = "<div class='col-lg-4 mb-4'><div class='card bg-" + groupDesign + " text-white shadow'><div class='card-body' onclick='showGroupDetails(`" + group.id + "`,`" + group.name + "`)'>" + group.name + "<div class='text-white-50 small'>" + group.description + "</div></div></div></div>";
+                  let groupTemplate = "<div class='col-lg-4 mb-4'><div class='card bg-" + groupDesign + " text-white shadow'><div class='card-body' onclick='showGroupDetails(`" + group.id + "`)'>" + group.name + "<div class='text-white-50 small'>" + group.description + "</div></div></div></div>";
                   items += groupTemplate;
             }
             document.getElementById("listOfGroups").innerHTML = items;
@@ -206,8 +206,8 @@ async function listGroups() {
       }
 }
 
-async function showGroupDetails(id, name) {
-      let respObj = await core.ajax("/xpense-manager/apis/groupDetails.php?id=" + id);
+async function showGroupDetails(id) {
+      let respObj = await core.ajax("/xpense-manager/apis/group/detailsByID.php?id=" + id);
       try {
             let response = JSON.parse(respObj);
             // let expense = response.data.expense;
@@ -223,7 +223,7 @@ async function showGroupDetails(id, name) {
                   let totalExpense = response.data.expense.total;
                   let count = response.data.members.count;
                   let latest = response.data.members.latest;
-                  let body = "Group Name: " + name + "<br>" + "Title: " + title + "<br>" + "Created By: " + createdBy + " | " + "Created On " + createdOn + "<br>" + "Owner: " + owner + " | " + "Since: 2024-Feb-25 " + "<br>" + "Expenses: " + "<br>" + "Month: &#8377; " + month + "/-" + " | " + "year: &#8377; " + year + "/-" + " | " + "Total: &#8377; " + totalExpense + "/-" + "<br>" + "Members :" + count + " people | " + "Latest: " + latest + "<br>" + "<br>" + "<button class='btn btn-primary mr-3' type='button' onclick='addUser(`" + id + "`,`" + name + "`);'>+ User</button>";
+                  let body = "Group Name: " + name + "<br>" + "Title: " + title + "<br>" + "Created By: " + createdBy + " | " + "Created On " + createdOn + "<br>" + "Owner: " + owner + " | " + "Since: 2024-Feb-25 " + "<br>" + "Expenses: " + "<br>" + "Month: &#8377; " + month + "/-" + " | " + "year: &#8377; " + year + "/-" + " | " + "Total: &#8377; " + totalExpense + "/-" + "<br>" + "Members :" + count + " people | " + "Latest: " + latest + "<br>" + "<br>" + "<button class='btn btn-primary mr-3' type='button' onclick='showAddUser(`" + id + "`,`" + name + "`);'>+ User</button>";
                   core.getDialogBox(name, body, "medium");
             }
       } catch {
@@ -233,7 +233,7 @@ async function showGroupDetails(id, name) {
       }
 }
 
-function addUser(id, name) {
+function showAddUser(id, name) {
       let body = "<input type='hidden' id='groupId' value='" + id + "' readonly>";
       body += "<input type='text' class='form-control' placeholder='Search Users' id='userSearch' onkeyup='searchUsers();' autocomplete='off'><br>";
       body += "<table class='table table-bordered'>";
@@ -243,12 +243,61 @@ function addUser(id, name) {
       core.getDialogBox("User Add : " + name, body, "medium");
 }
 
-function searchUsers() {
+async function searchUsers() {
       let searchKey = document.getElementById('userSearch').value;
-      let tableData = "<table class='table table-bordered'>";
-      tableData += "<tr><td>Kishan</td><td>kishan19feb@gmail.com</td><td>+</td><tr>";
-      tableData += "</table>";
-      document.getElementById('userData').innerHTML = tableData;
-      console.log(searchKey);
+
+      var request = JSON.stringify({
+            data: {
+                  "searchKey": searchKey
+            },
+            pagination: {
+                  pageSize: 10,
+                  currentPage: 1,
+                  sortBy: "name",
+                  sortOrder: "ASC"
+            }
+      });
+
+      core.atLoader(true);
+      let respObj = await core.ajax("/xpense-manager/apis/user/search.php?request=" + request);
+      try {
+            let response = JSON.parse(respObj);
+            if (response["code"] == 0) {
+                  let users = response["data"];
+                  let userTemplate = "<table class='table table-bordered'>";
+                  for (let user of users) {
+                        userTemplate += "<tr><td>" + user.name + "</td><td>" + user.email + "</td><td><i class='fas fa-plus-square' onclick='addUser(`" + user.id + "`);'></i></td><tr>";
+                  }
+                  userTemplate += "</table>";
+                  document.getElementById('userData').innerHTML = userTemplate;
+            }
+      } catch {
+            core.getFlashMsg("WARNING", "Something went wrong");
+      } finally {
+            core.atLoader(false);
+      }
 }
 
+async function addUser(userID) {
+      let groupID = document.getElementById("groupId").value;
+      console.log(userID, groupID);
+      var request = JSON.stringify({
+            data: {
+                  "groupID": groupID,
+                  "userID": userID
+            },
+      });
+
+      core.atLoader(true);
+      let respObj = await core.ajax("/xpense-manager/apis/user/add.php?request=" + request);
+      try {
+            let response = JSON.parse(respObj);
+            if (response["code"] == 0) {
+                  core.getFlashMsg("SUCCESS", response['message']);
+            }
+      } catch {
+            core.getFlashMsg("WARNING", "Something went wrong");
+      } finally {
+            core.atLoader(false);
+      }
+}

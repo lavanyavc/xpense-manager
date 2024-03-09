@@ -1,5 +1,5 @@
 <?php
-require "database.php";
+require "../commons/database.php";
 $input = json_decode(file_get_contents('php://input'),true);
 
 $userName = $input["data"]["name"];

@@ -1,5 +1,5 @@
 <?php
-require "database.php";
+require "../commons/database.php";
 
 $groupID = $_GET["id"];
 if(empty($groupID)){
