@@ -152,7 +152,7 @@ async function login() {
 }
 
 // Logout Prompt
-function promptLogout() {
+function logoutPrompt() {
       let title = "Are you sure ?";
       let body = "<button class='btn btn-warning mr-3' type='button' onclick='core.closeDialogBox();'>Cancel</button><a class='btn btn-primary' onclick='logout();'>Confirm</a>";
       core.getDialogBox(title, body, "small", false);
@@ -170,79 +170,7 @@ function logout() {
       }, 1000);
 }
 
-// Display List of Groups
-async function listGroups() {
-      let searchKey = document.getElementById("searchKey").value;
-
-      var request = JSON.stringify({
-            data: {
-                  "searchKey": searchKey
-            },
-            pagination: {
-                  pageSize: 10,
-                  currentPage: 1,
-                  sortBy: "name",
-                  sortOrder: "ASC"
-            }
-      });
-
-      core.atLoader(true);
-      let respObj = await core.ajax("/xpense-manager/apis/group/list.php?request=" + request);
-      try {
-            let response = JSON.parse(respObj);
-            let groups = response["data"];
-            let items = "";
-            let index = 0;
-            for (let group of groups) {
-                  let groupDesign = itemsDesign[index++ % itemsDesign.length];
-                  let groupTemplate = "<div class='col-lg-4 mb-4'><div class='card bg-" + groupDesign + " text-white shadow'><div class='card-body' onclick='showGroupDetails(`" + group.id + "`)'>" + group.name + "<div class='text-white-50 small'>" + group.description + "</div></div></div></div>";
-                  items += groupTemplate;
-            }
-            document.getElementById("listOfGroups").innerHTML = items;
-      } catch {
-            core.getFlashMsg("WARNING", "Something went wrong");
-      } finally {
-            core.atLoader(false);
-      }
-}
-
-async function showGroupDetails(id) {
-      let respObj = await core.ajax("/xpense-manager/apis/group/detailsByID.php?id=" + id);
-      try {
-            let response = JSON.parse(respObj);
-            // let expense = response.data.expense;
-            if (response["code"] == 0) {
-                  let id = response.data.group.id;
-                  let name = response.data.group.groupName;
-                  let title = response.data.group.description;
-                  let createdBy = response.data.group.userName;
-                  let createdOn = response.data.group.created_on;
-                  let owner = response.data.group.ownerName;
-                  let month = response.data.expense.month;
-                  let year = response.data.expense.year;
-                  let totalExpense = response.data.expense.total;
-                  let count = response.data.members.count;
-                  let latest = response.data.members.latest;
-                  let body = "Group Name: " + name + "<br>" + "Title: " + title + "<br>" + "Created By: " + createdBy + " | " + "Created On " + createdOn + "<br>" + "Owner: " + owner + " | " + "Since: 2024-Feb-25 " + "<br>" + "Expenses: " + "<br>" + "Month: &#8377; " + month + "/-" + " | " + "year: &#8377; " + year + "/-" + " | " + "Total: &#8377; " + totalExpense + "/-" + "<br>" + "Members :" + count + " people | " + "Latest: " + latest + "<br>" + "<br>" + "<button class='btn btn-primary mr-3' type='button' onclick='showAddUser(`" + id + "`,`" + name + "`);'>+ User</button>";
-                  core.getDialogBox(name, body, "medium");
-            }
-      } catch {
-            core.getFlashMsg("WARNING", "Something went wrong");
-      } finally {
-            core.atLoader(false);
-      }
-}
-
-function showAddUser(id, name) {
-      let body = "<input type='hidden' id='groupId' value='" + id + "' readonly>";
-      body += "<input type='text' class='form-control' placeholder='Search Users' id='userSearch' onkeyup='searchUsers();' autocomplete='off'><br>";
-      body += "<table class='table table-bordered'>";
-      body += "<tr><th>Name</th><th>Email</th><th>Action</th></tr>";
-      body += "</table>";
-      body += "<span id='userData'></span>";
-      core.getDialogBox("User Add : " + name, body, "medium");
-}
-
+// Search Users
 async function searchUsers() {
       let searchKey = document.getElementById('userSearch').value;
 
@@ -278,6 +206,18 @@ async function searchUsers() {
       }
 }
 
+// Opens Add User Dialog
+function addUserDialog(id, name) {
+      let body = "<input type='hidden' id='groupId' value='" + id + "' readonly>";
+      body += "<input type='text' class='form-control' placeholder='Search Users' id='userSearch' onkeyup='searchUsers();' autocomplete='off'><br>";
+      body += "<table class='table table-bordered'>";
+      body += "<tr><th>Name</th><th>Email</th><th>Action</th></tr>";
+      body += "</table>";
+      body += "<span id='userData'></span>";
+      core.getDialogBox("User Add : " + name, body, "medium");
+}
+
+// Add user to Group
 async function addUser(userID) {
       let groupID = document.getElementById("groupId").value;
       console.log(userID, groupID);
@@ -292,12 +232,93 @@ async function addUser(userID) {
       let respObj = await core.ajax("/xpense-manager/apis/user/add.php?request=" + request);
       try {
             let response = JSON.parse(respObj);
+            let alertClass;
+            let alertMessage;
+            switch (response["code"]) {
+                  case 0:
+                        alertClass = "SUCCESS";
+                        alertMessage = response['message'];
+                        break;
+                  case 1:
+                        alertClass = "WARNING";
+                        alertMessage = response['message'];
+                        break;
+                  default:
+                        alertClass = "DANGER";
+                        alertMessage = "Unknown Response";
+            }
+            core.getFlashMsg(alertClass, alertMessage);
+      } catch {
+            core.getFlashMsg("WARNING", "Something went wrong");
+      } finally {
+            core.atLoader(false);
+      }
+}
+
+// Display List of Groups
+async function listGroups() {
+      let searchKey = document.getElementById("searchKey").value;
+
+      var request = JSON.stringify({
+            data: {
+                  "searchKey": searchKey
+            },
+            pagination: {
+                  pageSize: 10,
+                  currentPage: 1,
+                  sortBy: "name",
+                  sortOrder: "ASC"
+            }
+      });
+
+      core.atLoader(true);
+      let respObj = await core.ajax("/xpense-manager/apis/group/list.php?request=" + request);
+      try {
+            let response = JSON.parse(respObj);
+            let groups = response["data"];
+            let items = "";
+            let index = 0;
+            for (let group of groups) {
+                  let groupDesign = itemsDesign[index++ % itemsDesign.length];
+                  let groupTemplate = "<div class='col-lg-4 mb-4'><div class='card bg-" + groupDesign + " text-white shadow'><div class='card-body' onclick='groupDetailsDialog(`" + group.id + "`)'>" + group.name + "<div class='text-white-50 small'>" + group.description + "</div></div></div></div>";
+                  items += groupTemplate;
+            }
+            document.getElementById("listOfGroups").innerHTML = items;
+      } catch {
+            core.getFlashMsg("WARNING", "Something went wrong");
+      } finally {
+            core.atLoader(false);
+      }
+}
+
+// Group Details Dialog
+async function groupDetailsDialog(id) {
+      let respObj = await core.ajax("/xpense-manager/apis/group/detailsByID.php?id=" + id);
+      try {
+            let response = JSON.parse(respObj);
             if (response["code"] == 0) {
-                  core.getFlashMsg("SUCCESS", response['message']);
+                  let id = response.data.group.id;
+                  let name = response.data.group.groupName;
+                  let title = response.data.group.description;
+                  let createdBy = response.data.group.userName;
+                  let createdOn = response.data.group.created_on;
+                  let owner = response.data.group.ownerName;
+                  let month = response.data.expense.month;
+                  let year = response.data.expense.year;
+                  let totalExpense = response.data.expense.total;
+                  let count = response.data.members.count;
+                  let latest = response.data.members.latest;
+                  let body = "Group Name: " + name + "<br>" + "Title: " + title + "<br>" + "Created By: " + createdBy + " | " + "Created On " + createdOn + "<br>" + "Owner: " + owner + " | " + "Since: 2024-Feb-25 " + "<br>" + "Expenses: " + "<br>" + "Month: &#8377; " + month + "/-" + " | " + "year: &#8377; " + year + "/-" + " | " + "Total: &#8377; " + totalExpense + "/-" + "<br>" + "Members :" + count + " people | " + "Latest: " + latest + "<br>" + "<br>" + "<button class='btn btn-dark' type='button' onclick='addUserDialog(`" + id + "`,`" + name + "`);'>+ USER</button>";
+                  core.getDialogBox(name, body, "medium");
             }
       } catch {
             core.getFlashMsg("WARNING", "Something went wrong");
       } finally {
             core.atLoader(false);
       }
+}
+
+// Add Group Dialog
+function addGroupDialog() {
+      core.getDialogBox("Group Add", "", "medium");
 }

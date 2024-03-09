@@ -240,7 +240,7 @@
                                                       Activity Log
                                                 </a>
                                                 <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item" href="javascript:promptLogout();">
+                                                <a class="dropdown-item" href="javascript:logoutPrompt();">
                                                       <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                                       Logout
                                                 </a>
@@ -259,16 +259,13 @@
 
                               <!-- Topbar Search -->
                               <div class="row mb-4">
-                                    <form
-                                          class="d-sm-inline-block form-inline mr-auto ml-md-1 my-2 my-md-0 mw-100 navbar-search">
-                                          <div class="input-group">
-                                                <input type="text" id="searchKey"
-                                                      class="form-control bg-light border-0 small" placeholder="Search"
-                                                      onkeyup="listGroups();" aria-label="Search"
-                                                      aria-describedby="basic-addon2">
-                                          </div>
-                                    </form>
-
+                                    <div class="col col-lg-8">
+                                          <input type="text" id="searchKey" class="form-control" placeholder="Search"
+                                                onkeyup="listGroups();" aria-label="Search">
+                                    </div>
+                                    <div class="col col-lg-4"><input type="button" class="form-control btn btn-dark"
+                                                value="+ GROUP" onclick="addGroupDialog();">
+                                    </div>
                               </div>
 
                               <!-- Content Row -->

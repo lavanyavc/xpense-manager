@@ -4,20 +4,22 @@ $input = json_decode($_GET["request"],true);
 $groupID= $input["data"]["groupID"]; 
 $userID = $input["data"]["userID"];
 
-// $groupID = $_GET["groupID"];
-// $userID=$_GET["userID"];
-// if(empty($groupID,$userID)){
-//       die(json_encode($response));
-// }
-
-$sql = "INSERT INTO users_groups(`user_id`,`group_id`) VALUES('".$userID."','".$groupID."')";
-// $sql ="INSERT INTO products(`Product_ID`,`Product_Name`,`Quantity`,`Price`) VALUES(".$product_id.",'".$product_name."','".$quantity."','".$price."')";
+$sql = "SELECT count(*) as count FROM users_groups WHERE `user_id` = '".$userID."' AND `group_id` = '".$groupID."'";
 
 $result = $conn->query($sql);
-if(!empty($result)){
-      // Response preparation
-      $response['code'] = 0;
-      $response['message'] = "User added successfully";
+$records = $result->fetch_assoc();
+if($records['count'] > 0){
+      $response["code"] = 1;
+      $response["message"] = "User already exist in this group.";
+} else {           
+      // Insert data into database
+      $sql = "INSERT INTO users_groups(`user_id`,`group_id`) VALUES('".$userID."','".$groupID."')";
+      if($conn->query($sql)){
+            $response["code"] = 0;
+            $response["message"] = "User added successfully.";
+      } else {
+            $response["message"] = "Error: " . $conn->error;
+      }
 }
 echo json_encode($response);
 if($conn){
