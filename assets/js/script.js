@@ -330,7 +330,7 @@ async function groupDetailsDialog(id) {
                   let body = "<table class='table table-bordered'>";
                   body += "<tr><th> Description </th><td colspan='3'>" + description + "</td></tr>";
                   body += "<tr><th> Created By </th><td>" + owner + "</td><th> Created On </th><td>" + createdOn + "</td></tr>";
-                  body += "<tr><th> Total Members </th><td> " + count + " </td><th> Latest Member </th><td> " + latest + " </td></tr>";
+                  body += "<tr><th> Latest Member </th><td> " + latest + " </td><th> Total Members </th><td> " + count + " </td></tr>";
                   body += "</table>";
 
                   body += "<table class='table table-bordered mt-4'>";
