@@ -6,25 +6,22 @@ if (empty($groupID)) {
       die(json_encode($response));
 }
 
-$sql = "SELECT `groups`.`id`,`groups`.`name` as groupName, `groups`.`description`,`groups`.`created_on`,`u1`.`name` as createdByUserName,`u2`.`name` as ownerName FROM `groups` JOIN `users` u1 ON `groups`.`created_by`=`u1`.`id` JOIN `users` u2 ON `groups`.`owner`=`u2`.id WHERE `groups`.id = " . $groupID . " LIMIT 1";
+$sql = "SELECT `groups`.`id`, `groups`.`name` as groupName, `groups`.`description`, `groups`.`created_on`, `users`.`name` as ownerName FROM `groups` JOIN `users` ON `groups`.`owner`=`users`.`id` WHERE `groups`.id = " . $groupID . " LIMIT 1";
 $result = $conn->query($sql);
+
 if (!empty($result)) {
       // Group Data
       $data = array(
-            "group" => $result->fetch_assoc(),
-            "ownerSince" => date('Y-m-d H:i:s')
+            "group" => $result->fetch_assoc()
       );
 
       // Member Data
-      $sql = "SELECT COUNT(*) as count FROM `users_groups` WHERE `group_id` = " . $groupID;
-
-
+      $sql = "SELECT `users`.`name` FROM `users`, `groups_users` WHERE `groups_users`.`user_id` = `users`.`id` AND `groups_users`.`group_id` =  " . $groupID . " ORDER BY `groups_users`.`created_on` DESC";
       $result = $conn->query($sql);
-      $numOfMembers = $result->fetch_assoc();
-      $latestMemberName = $data["group"]["groupName"];
+      $latest = $result->fetch_assoc();
       $data["members"] = array(
-            "count" => $numOfMembers['count'],
-            "latest" => $latestMemberName
+            "count" => $result->num_rows,
+            "latest" => $latest['name']
       );
 
       // Expense Data

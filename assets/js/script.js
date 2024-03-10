@@ -18,10 +18,6 @@ $(document).ready(async function () {
       }
 });
 
-$('#coreModal').on('hidden.bs.modal', function () {
-      console.log("Listened");
-});
-
 // Open the Navigation Menu
 function openNav() {
       document.getElementById("mySidenav").style.width = "200px";
@@ -231,8 +227,15 @@ function addUserDialog(id, name) {
 
 // Add user to Group
 async function addUser(userID) {
+      if (userID == "") {
+            core.getFlashMsg("WARNING", "Invalid User details");
+            return false;
+      }
       let groupID = document.getElementById("groupId").value;
-      console.log(userID, groupID);
+      if (groupID == "") {
+            core.getFlashMsg("WARNING", "Invalid Group");
+            return false;
+      }
       var request = JSON.stringify({
             authorization: localStorage.getItem('authToken'),
             data: {
@@ -312,11 +315,8 @@ async function groupDetailsDialog(id) {
                   let id = response.data.group.id;
                   let name = response.data.group.groupName;
                   let description = response.data.group.description;
-                  let createdBy = response.data.group.createdByUserName;
-                  let createdOn = response.data.group.created_on;
-                  // Group Owner Details
                   let owner = response.data.group.ownerName;
-                  let ownerSince = response.data.ownerSince;
+                  let createdOn = response.data.group.created_on;
                   // Group Expense Details
                   let month = response.data.expense.month;
                   let year = response.data.expense.year;
@@ -329,8 +329,7 @@ async function groupDetailsDialog(id) {
 
                   let body = "<table class='table table-bordered'>";
                   body += "<tr><th> Description </th><td colspan='3'>" + description + "</td></tr>";
-                  body += "<tr><th> Created By </th><td>" + createdBy + "</td><th> Created On </th><td>" + createdOn + "</td></tr>";
-                  body += "<tr><th> Owner </th><td>" + owner + "</td><th> Since </th><td> " + ownerSince + "</td></tr>";
+                  body += "<tr><th> Created By </th><td>" + owner + "</td><th> Created On </th><td>" + createdOn + "</td></tr>";
                   body += "<tr><th> Total Members </th><td> " + count + " </td><th> Latest Member </th><td> " + latest + " </td></tr>";
                   body += "</table>";
 
@@ -340,7 +339,6 @@ async function groupDetailsDialog(id) {
                   body += "</table>";
 
                   let footer = "<button class='btn btn-outline-primary btn-sm' onclick='addUserDialog(`" + id + "`,`" + name + "`);'>Add User</button>";
-                  footer += "<button class='btn btn-outline-primary btn-sm ml-2' onclick='changeOwnerDialog(`" + id + "`,`" + name + "`);'>Change Owner</button>";
                   footer += "<button class='btn btn-outline-danger btn-sm ml-2'  onclick='core.closeDialogBox();'>Cancel</button>";
 
                   core.getDialogBox(title, body, footer, "lg");
@@ -360,13 +358,21 @@ function addGroupDialog() {
       let footer = "<button class='btn btn-outline-primary btn-sm' onclick='addGroup();'>Create</button>";
       footer += "<button class='btn btn-outline-danger btn-sm ml-2' onclick='core.closeDialogBox();'>Cancel</button>";
       core.getDialogBox(title, body, footer, "md");
-
 }
 
 // Add Group
 async function addGroup() {
       let groupName = document.getElementById("groupName").value;
+      if (groupName == "") {
+            core.getFlashMsg("WARNING", "Enter valid group name");
+            return false;
+      }
       let groupDescription = document.getElementById("groupDescription").value;
+      if (groupDescription == "") {
+            core.getFlashMsg("WARNING", "Enter valid group description");
+            return false;
+      }
+      core.closeDialogBox();
       var request = JSON.stringify({
             authorization: localStorage.getItem('authToken'),
             data: {
@@ -382,11 +388,7 @@ async function addGroup() {
             switch (response["code"]) {
                   case 0:
                         alertClass = "SUCCESS";
-                        core.closeDialogBox();
                         listGroups();
-                        break;
-                  case 1:
-                        alertClass = "WARNING";
                         break;
                   default:
                         alertClass = "DANGER";
