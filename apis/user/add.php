@@ -1,20 +1,20 @@
 <?php
 require "../commons/database.php";
-$input = json_decode($_GET["request"],true);
-$groupID= $input["data"]["groupID"]; 
+$input = json_decode(file_get_contents('php://input'), true);
+$groupID = $input["data"]["groupID"];
 $userID = $input["data"]["userID"];
 
-$sql = "SELECT count(*) as count FROM users_groups WHERE `user_id` = '".$userID."' AND `group_id` = '".$groupID."'";
+$sql = "SELECT count(*) as count FROM users_groups WHERE `user_id` = '" . $userID . "' AND `group_id` = '" . $groupID . "'";
 
 $result = $conn->query($sql);
 $records = $result->fetch_assoc();
-if($records['count'] > 0){
+if ($records['count'] > 0) {
       $response["code"] = 1;
       $response["message"] = "User already exist in this group.";
-} else {           
+} else {
       // Insert data into database
-      $sql = "INSERT INTO users_groups(`user_id`,`group_id`) VALUES('".$userID."','".$groupID."')";
-      if($conn->query($sql)){
+      $sql = "INSERT INTO users_groups(`user_id`,`group_id`) VALUES('" . $userID . "','" . $groupID . "')";
+      if ($conn->query($sql)) {
             $response["code"] = 0;
             $response["message"] = "User added successfully.";
       } else {
@@ -22,7 +22,6 @@ if($records['count'] > 0){
       }
 }
 echo json_encode($response);
-if($conn){
+if ($conn) {
       $conn->close();
 }
-?>

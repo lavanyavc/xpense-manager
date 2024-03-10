@@ -18,6 +18,10 @@ $(document).ready(async function () {
       }
 });
 
+$('#coreModal').on('hidden.bs.modal', function () {
+      console.log("Listened");
+});
+
 // Open the Navigation Menu
 function openNav() {
       document.getElementById("mySidenav").style.width = "200px";
@@ -153,9 +157,11 @@ async function login() {
 
 // Logout Prompt
 function logoutPrompt() {
-      let title = "Are you sure ?";
-      let body = "<button class='btn btn-warning mr-3' type='button' onclick='core.closeDialogBox();'>Cancel</button><a class='btn btn-primary' onclick='logout();'>Confirm</a>";
-      core.getDialogBox(title, body, "small", false);
+      let title = "Logout";
+      let body = "Are you sure to logout ?";
+      let footer = "<button class='btn btn-outline-primary btn-sm' onclick='logout();'>Confirm</button>";
+      footer += "<button class='btn btn-outline-danger btn-sm ml-2'  onclick='core.closeDialogBox();'>Cancel</button>";
+      core.getDialogBox(title, body, footer, "sm");
 }
 
 // Logout an User
@@ -175,6 +181,7 @@ async function searchUsers() {
       let searchKey = document.getElementById('userSearch').value;
 
       var request = JSON.stringify({
+            authorization: localStorage.getItem('authToken'),
             data: {
                   "searchKey": searchKey
             },
@@ -208,13 +215,18 @@ async function searchUsers() {
 
 // Opens Add User Dialog
 function addUserDialog(id, name) {
+      core.closeDialogBox();
+      let title = "Add User to " + name;
       let body = "<input type='hidden' id='groupId' value='" + id + "' readonly>";
       body += "<input type='text' class='form-control' placeholder='Search Users' id='userSearch' onkeyup='searchUsers();' autocomplete='off'><br>";
       body += "<table class='table table-bordered'>";
       body += "<tr><th>Name</th><th>Email</th><th>Action</th></tr>";
       body += "</table>";
       body += "<span id='userData'></span>";
-      core.getDialogBox("User Add : " + name, body, "medium");
+      let footer = "<button class='btn btn-outline-danger btn-sm'  onclick='core.closeDialogBox();'>Cancel</button>";
+      setTimeout(function () {
+            core.getDialogBox(title, body, footer, "md");
+      }, 500);
 }
 
 // Add user to Group
@@ -222,6 +234,7 @@ async function addUser(userID) {
       let groupID = document.getElementById("groupId").value;
       console.log(userID, groupID);
       var request = JSON.stringify({
+            authorization: localStorage.getItem('authToken'),
             data: {
                   "groupID": groupID,
                   "userID": userID
@@ -229,25 +242,22 @@ async function addUser(userID) {
       });
 
       core.atLoader(true);
-      let respObj = await core.ajax("/xpense-manager/apis/user/add.php?request=" + request);
+      let respObj = await core.ajax("/xpense-manager/apis/user/add.php", request, "POST");
       try {
             let response = JSON.parse(respObj);
             let alertClass;
-            let alertMessage;
             switch (response["code"]) {
                   case 0:
                         alertClass = "SUCCESS";
-                        alertMessage = response['message'];
                         break;
                   case 1:
                         alertClass = "WARNING";
-                        alertMessage = response['message'];
                         break;
                   default:
                         alertClass = "DANGER";
-                        alertMessage = "Unknown Response";
+                        break;
             }
-            core.getFlashMsg(alertClass, alertMessage);
+            core.getFlashMsg(alertClass, response['message']);
       } catch {
             core.getFlashMsg("WARNING", "Something went wrong");
       } finally {
@@ -260,6 +270,7 @@ async function listGroups() {
       let searchKey = document.getElementById("searchKey").value;
 
       var request = JSON.stringify({
+            authorization: localStorage.getItem('authToken'),
             data: {
                   "searchKey": searchKey
             },
@@ -297,19 +308,42 @@ async function groupDetailsDialog(id) {
       try {
             let response = JSON.parse(respObj);
             if (response["code"] == 0) {
+                  // Group Details
                   let id = response.data.group.id;
                   let name = response.data.group.groupName;
-                  let title = response.data.group.description;
-                  let createdBy = response.data.group.userName;
+                  let description = response.data.group.description;
+                  let createdBy = response.data.group.createdByUserName;
                   let createdOn = response.data.group.created_on;
+                  // Group Owner Details
                   let owner = response.data.group.ownerName;
+                  let ownerSince = response.data.ownerSince;
+                  // Group Expense Details
                   let month = response.data.expense.month;
                   let year = response.data.expense.year;
                   let totalExpense = response.data.expense.total;
+                  // Group Member Details
                   let count = response.data.members.count;
                   let latest = response.data.members.latest;
-                  let body = "Group Name: " + name + "<br>" + "Title: " + title + "<br>" + "Created By: " + createdBy + " | " + "Created On " + createdOn + "<br>" + "Owner: " + owner + " | " + "Since: 2024-Feb-25 " + "<br>" + "Expenses: " + "<br>" + "Month: &#8377; " + month + "/-" + " | " + "year: &#8377; " + year + "/-" + " | " + "Total: &#8377; " + totalExpense + "/-" + "<br>" + "Members :" + count + " people | " + "Latest: " + latest + "<br>" + "<br>" + "<button class='btn btn-dark' type='button' onclick='addUserDialog(`" + id + "`,`" + name + "`);'>+ USER</button>";
-                  core.getDialogBox(name, body, "medium");
+
+                  let title = name;
+
+                  let body = "<table class='table table-bordered'>";
+                  body += "<tr><th> Description </th><td colspan='3'>" + description + "</td></tr>";
+                  body += "<tr><th> Created By </th><td>" + createdBy + "</td><th> Created On </th><td>" + createdOn + "</td></tr>";
+                  body += "<tr><th> Owner </th><td>" + owner + "</td><th> Since </th><td> " + ownerSince + "</td></tr>";
+                  body += "<tr><th> Total Members </th><td> " + count + " </td><th> Latest Member </th><td> " + latest + " </td></tr>";
+                  body += "</table>";
+
+                  body += "<table class='table table-bordered mt-4'>";
+                  body += "<tr><th> Current Month Expense </th><td> &#8377; " + month + " /-</td><th> Current Year Expense </th><td> &#8377; " + year + " /-</td></tr>";
+                  body += "<tr><th colspan='2'> Overall Expenses (since : " + createdOn + ") </th><td colspan='2'> &#8377; " + totalExpense + " /-  </td></tr>";
+                  body += "</table>";
+
+                  let footer = "<button class='btn btn-outline-primary btn-sm' onclick='addUserDialog(`" + id + "`,`" + name + "`);'>Add User</button>";
+                  footer += "<button class='btn btn-outline-primary btn-sm ml-2' onclick='changeOwnerDialog(`" + id + "`,`" + name + "`);'>Change Owner</button>";
+                  footer += "<button class='btn btn-outline-danger btn-sm ml-2'  onclick='core.closeDialogBox();'>Cancel</button>";
+
+                  core.getDialogBox(title, body, footer, "lg");
             }
       } catch {
             core.getFlashMsg("WARNING", "Something went wrong");
@@ -320,5 +354,48 @@ async function groupDetailsDialog(id) {
 
 // Add Group Dialog
 function addGroupDialog() {
-      core.getDialogBox("Group Add", "", "medium");
+      let title = "Create Group";
+      let body = "<input type='text' class='form-control' id='groupName' placeholder='Group Name' onkeyup='core.transformCase(this,`UCWORDS`);' autocomplete='off'><br>";
+      body += "<input type='text' class='form-control' id='groupDescription' placeholder='Group Description' autocomplete='off'><br>";
+      let footer = "<button class='btn btn-outline-primary btn-sm' onclick='addGroup();'>Create</button>";
+      footer += "<button class='btn btn-outline-danger btn-sm ml-2' onclick='core.closeDialogBox();'>Cancel</button>";
+      core.getDialogBox(title, body, footer, "md");
+
+}
+
+// Add Group
+async function addGroup() {
+      let groupName = document.getElementById("groupName").value;
+      let groupDescription = document.getElementById("groupDescription").value;
+      var request = JSON.stringify({
+            authorization: localStorage.getItem('authToken'),
+            data: {
+                  "groupName": groupName,
+                  "groupDescription": groupDescription
+            },
+      });
+      core.atLoader(true);
+      let respObj = await core.ajax("/xpense-manager/apis/group/add.php", request, "POST");
+      try {
+            let response = JSON.parse(respObj);
+            let alertClass;
+            switch (response["code"]) {
+                  case 0:
+                        alertClass = "SUCCESS";
+                        core.closeDialogBox();
+                        listGroups();
+                        break;
+                  case 1:
+                        alertClass = "WARNING";
+                        break;
+                  default:
+                        alertClass = "DANGER";
+                        break;
+            }
+            core.getFlashMsg(alertClass, response['message']);
+      } catch {
+            core.getFlashMsg("WARNING", "Something went wrong");
+      } finally {
+            core.atLoader(false);
+      }
 }

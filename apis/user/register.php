@@ -1,21 +1,21 @@
 <?php
 require "../commons/database.php";
-$input = json_decode(file_get_contents('php://input'),true);
+$input = json_decode(file_get_contents('php://input'), true);
 
 $userName = $input["data"]["name"];
 $userMobileNumber = $input["data"]["mobile"];
-$userEmail = $input["data"]["email"]; 
+$userEmail = $input["data"]["email"];
 $userPassword = md5($input["data"]["password"]);
 
-$sql = "SELECT count(*) as count FROM `users` WHERE `email` LIKE '".$userEmail."' OR `mobilenumber` = '".$userMobileNumber."'";
+$sql = "SELECT count(*) as count FROM `users` WHERE `email` LIKE '" . $userEmail . "' OR `mobilenumber` = '" . $userMobileNumber . "'";
 $result = $conn->query($sql);
 $records = $result->fetch_assoc();
-if($records['count'] > 0){
+if ($records['count'] > 0) {
       $response["message"] = "Email / Mobile already in use.";
-} else {           
+} else {
       // Insert data into database
-      $sql = ("INSERT INTO `users`(`name`, `mobilenumber`, `email`, `password`) VALUES ('".$userName."','".$userMobileNumber."','".$userEmail."','".$userPassword."')");
-      if($conn->query($sql)){
+      $sql = ("INSERT INTO `users`(`name`, `mobilenumber`, `email`, `password`) VALUES ('" . $userName . "','" . $userMobileNumber . "','" . $userEmail . "','" . $userPassword . "')");
+      if ($conn->query($sql)) {
             $response["code"] = 0;
             $response["message"] = "User registered successfully.";
       } else {
@@ -24,5 +24,4 @@ if($records['count'] > 0){
 }
 
 $conn->close();
-echo json_encode($response) ;
-?>
+echo json_encode($response);

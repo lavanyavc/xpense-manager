@@ -13,6 +13,7 @@ var MOBILE_PATTERN = /^[0-9]{10}$/;
 var EMAIL_PATTERN = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 var USERNAME_PATTERN = /^[a-z0-9-]+([-_\.]?[a-z0-9]+)+$/;
 var PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
+var coreModal;
 var core = {
 	goToURL: function (requestedUrl) {
 		window.location.href = requestedUrl;
@@ -84,32 +85,31 @@ var core = {
 		var commonStyle = "<a href='#' class='close' data-dismiss='alert' aria-label='close'>&times;</a>" + displayMsg + "</div>";
 		return (alertStyles[index]) + commonStyle;
 	},
-	getDialogBox: function (dialogTitle, dialogContent, size = "medium", showClose = true) {
-		var sizeClasses = { small: "modal-sm", medium: "modal-md", large: "modal-lg" };
-		var closeButton = (showClose ? "<button type='button' class='close' onclick='core.closeDialogBox();'>&times</button>" : "");
-		var dialogTemplate = "<div class='test'>" +
-			"<div class='modal fade' id='coreModal' role='dialog'>" +
-			"<div class='modal-dialog " + sizeClasses[size] + "'>" +
-			"<div class='modal-content'>" +
-			"<div class='modal-header'><h5 class='modal-title'><b><span id='infoTitle'></span></b></h5>" + closeButton + "</div>" +
-			"<div class='modal-body'><p><span id='infoBody'></span></p></div>" +
-			"<div class='modal-footer'><span id='infoFooter'></span></div>" +
-			"</div>" +
-			"</div>" +
-			"</div>" +
-			"</div>";
-		if (!$('#dialogHolder').length) {
-			$('body').after("<div id='dialogHolder'></div>");
+	getDialogBox: function (title, content, footer, size = "lg") {
+		var sizeClass = { sm: "modal-sm", md: "modal-md", lg: "modal-lg" };
+		var template = "<div class='modal fade' id='coreModal' role='dialog'>";
+		template += "<div class='modal-dialog " + sizeClass[size] + "'>";
+		template += "<div class='modal-content'>";
+		template += "<div class='modal-header'><span class='modal-title' id='coreTitle'></span></div>";
+		template += "<div class='modal-body'><span id='coreBody'></span></div>";
+		template += "<div class='modal-footer'><span id='coreFooter'></span></div>";
+		template += "</div></div></div>";
+		if (!$('#coreHolder').length) {
+			$('body').after("<div id='coreHolder'></div>");
 		}
-		this.setHTML('dialogHolder', dialogTemplate);
-		this.setHTML('infoTitle', dialogTitle);
-		this.setHTML('infoBody', dialogContent);
-		this.setHTML('infoFooter');
-		$('#coreModal').modal('show', { backdrop: "static" });
+		this.setHTML('coreHolder', template);
+		this.setHTML('coreTitle', title);
+		this.setHTML('coreBody', content);
+		this.setHTML('coreFooter', footer);
+		coreModal = new bootstrap.Modal(document.getElementById('coreModal'), {
+			backdrop: "static",
+			keyboard: false
+		});
+		coreModal.show();
 		return;
 	},
 	closeDialogBox: function () {
-		$('#coreModal').modal('hide');
+		coreModal.hide();
 	},
 	getFlashMsg: function (alertType, alertVal = "") {
 		var alertTypes = new Array("INFO", "WARNING", "DANGER", "SUCCESS");

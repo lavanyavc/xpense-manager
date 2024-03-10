@@ -12,8 +12,7 @@ $response = array(
 );
 
 // Connection to database
-$conn =new mysqli("localhost","root","","xpense-manager");
-if($conn->connect_error){
+$conn = new mysqli("localhost", "root", "", "xpense-manager");
+if ($conn->connect_error) {
       die(json_encode($response));
 }
-?>
