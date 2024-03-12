@@ -111,7 +111,7 @@ async function register() {
                   core.getFlashMsg("SUCCESS", response['message']);
                   setTimeout(() => {
                         core.goToURL("/xpense-manager/index.html");
-                  }, 2000);
+                  }, 3000);
             } else {
                   core.getFlashMsg("DANGER", response['message']);
             }
@@ -149,7 +149,7 @@ async function login() {
             if (response["code"] == 0) {
                   localStorage.setItem("authToken", response.data.token);
                   localStorage.setItem("userName", response.data.name);
-                  window.location.href = "/xpense-manager/dashboard.html";
+                  core.goToURL("/xpense-manager/dashboard.html");
             } else {
                   core.getFlashMsg("DANGER", (response['message']));
             }
@@ -175,7 +175,7 @@ function logout() {
       localStorage.removeItem("userName");
       setTimeout(function () {
             core.atLoader(false);
-            window.location.href = "/xpense-manager/index.html";
+            core.goToURL("/xpense-manager/index.html");
       }, 1000);
 }
 
