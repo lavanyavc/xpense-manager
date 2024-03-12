@@ -1,5 +1,7 @@
 <?php
 require "../commons/database.php";
+require "../commons/jwt.php";
+
 
 $input = json_decode($_GET["request"], true);
 $searchKey = $input["data"]["searchKey"];

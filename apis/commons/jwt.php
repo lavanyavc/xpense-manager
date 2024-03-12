@@ -5,25 +5,27 @@ class JWT
 
       public static function encode($data, $expirationTime = 3600)
       {
-            $header = base64_encode(json_encode(['typ' => 'JWT', 'alg' => 'HS256']));
+            $header = base64_encode(json_encode(['type' => 'JWT', 'algo' => 'SHA256']));
             $payload = base64_encode(json_encode([
                   'iss' => 'xpense-manager',
-                  'aud' => 'xpense-manager-users',
+                  'aud' => 'xpense-manager-web',
                   'iat' => time(),
-                  'nbf' => time(),
+                  'nbf' => time() + 1, // Not Before 1 second from now
                   'exp' => time() + $expirationTime,
                   'data' => $data,
             ]));
-            $signature = base64_encode(hash_hmac('sha256', "$header.$payload", self::$secretKey, true));
+            $signature = hash_hmac('sha256', "$header.$payload", self::$secretKey, true);
+            $signature = base64_encode($signature);
             return "$header.$payload.$signature";
       }
 
       public static function decode($token)
       {
             list($header, $payload, $signature) = explode('.', $token);
-            $expectedSignature = base64_encode(hash_hmac('sha256', "$header.$payload", self::$secretKey, true));
+            $expectedSignature = hash_hmac('sha256', "$header.$payload", self::$secretKey, true);
+            $expectedSignature = base64_encode($expectedSignature);
             $header = json_decode(base64_decode($header), true);
             $payload = json_decode(base64_decode($payload), true);
-            return ($signature == $expectedSignature) ? $payload : false;
+            return hash_equals($signature, $expectedSignature) ? $payload : false;
       }
 }

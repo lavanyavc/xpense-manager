@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-      <title>Dashboard</title>
+      <title>Profile</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <!-- css link -->
@@ -12,7 +12,6 @@
       <link rel="stylesheet" type="text/css" href="./codebase/font-awesome/css/all.min.css">
       <link rel="stylesheet" type="text/css" href="./assets/css/sb-admin-2.min.css">
       <link rel="stylesheet" type="text/css" href="./codebase/atLib/core.css">
-
 </head>
 
 <body id="page-top">
@@ -35,7 +34,7 @@
                   <hr class="sidebar-divider my-0">
 
                   <!-- Nav Item - Dashboard -->
-                  <li class="nav-item active">
+                  <li class="nav-item">
                         <a class="nav-link" href="dashboard.html">
                               <i class="fas fa-fw fa-tachometer-alt"></i>
                               <span>Dashboard</span></a>
@@ -255,225 +254,61 @@
 
                               <!-- Page Heading -->
                               <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                                    <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                                    <h1 class="h3 mb-0 text-gray-800">Profile</h1>
                               </div>
-
-                              <!-- Content Row -->
-                              <div class="row">
-
-                                    <!-- Earnings (Monthly) Card Example -->
-                                    <div class="col-xl-3 col-md-6 mb-4">
-                                          <div class="card border-left-primary shadow h-100 py-2">
-                                                <div class="card-body">
-                                                      <div class="row no-gutters align-items-center">
-                                                            <div class="col mr-2">
-                                                                  <div
-                                                                        class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                                        Earnings (Monthly)</div>
-                                                                  <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                        $40,000</div>
-                                                            </div>
-                                                            <div class="col-auto">
-                                                                  <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                                            </div>
-                                                      </div>
-                                                </div>
+                              <!-- Topbar Search -->
+                              <div class="row mb-4">
+                                    <form>
+                                          <div class="col col-lg-12 col-md-12 mb-4">
+                                                <input type="text" class="form-control" id="name" placeholder="Name"
+                                                      autocomplete="false">
+                                                </label>
                                           </div>
-                                    </div>
-
-                                    <!-- Earnings (Monthly) Card Example -->
-                                    <div class="col-xl-3 col-md-6 mb-4">
-                                          <div class="card border-left-success shadow h-100 py-2">
-                                                <div class="card-body">
-                                                      <div class="row no-gutters align-items-center">
-                                                            <div class="col mr-2">
-                                                                  <div
-                                                                        class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                                        Earnings (Annual)</div>
-                                                                  <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                                        $215,000</div>
-                                                            </div>
-                                                            <div class="col-auto">
-                                                                  <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                                            </div>
-                                                      </div>
-                                                </div>
+                                          <div class="col col-lg-12 col-md-12 mb-4">
+                                                <input type="text" class="form-control" id="email" readonly>
                                           </div>
-                                    </div>
-
-                                    <!-- Earnings (Monthly) Card Example -->
-                                    <div class="col-xl-3 col-md-6 mb-4">
-                                          <div class="card border-left-info shadow h-100 py-2">
-                                                <div class="card-body">
-                                                      <div class="row no-gutters align-items-center">
-                                                            <div class="col mr-2">
-                                                                  <div
-                                                                        class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                                                        Tasks
-                                                                  </div>
-                                                                  <div class="row no-gutters align-items-center">
-                                                                        <div class="col-auto">
-                                                                              <div
-                                                                                    class="h5 mb-0 mr-3 font-weight-bold text-gray-800">
-                                                                                    50%</div>
-                                                                        </div>
-                                                                        <div class="col">
-                                                                              <div class="progress progress-sm mr-2">
-                                                                                    <div class="progress-bar bg-info"
-                                                                                          role="progressbar"
-                                                                                          style="width: 50%"
-                                                                                          aria-valuenow="50"
-                                                                                          aria-valuemin="0"
-                                                                                          aria-valuemax="100"></div>
-                                                                              </div>
-                                                                        </div>
-                                                                  </div>
-                                                            </div>
-                                                            <div class="col-auto">
-                                                                  <i
-                                                                        class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                                            </div>
-                                                      </div>
-                                                </div>
+                                          <div class="col col-lg-12 col-md-12 mb-4">
+                                                <input type="text" class="form-control" id="mobile" readonly>
                                           </div>
-                                    </div>
-
-                                    <!-- Pending Requests Card Example -->
-                                    <div class="col-xl-3 col-md-6 mb-4">
-                                          <div class="card border-left-warning shadow h-100 py-2">
-                                                <div class="card-body">
-                                                      <div class="row no-gutters align-items-center">
-                                                            <div class="col mr-2">
-                                                                  <div
-                                                                        class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                                        Pending Requests</div>
-                                                                  <div class="h5 mb-0 font-weight-bold text-gray-800">18
-                                                                  </div>
-                                                            </div>
-                                                            <div class="col-auto">
-                                                                  <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                                            </div>
-                                                      </div>
-                                                </div>
+                                          <div class="col col-lg-12 col-md-12 mb-4">
+                                                <input type="password" class="form-control" id="newPassword"
+                                                      placeholder="Password (New)" autocomplete="false">
                                           </div>
-                                    </div>
+                                          <div class="col col-lg-12 col-md-12 mb-4">
+                                                <input type="password" class="form-control" id="confirmPassword"
+                                                      placeholder="Password (Confirm)" autocomplete="false">
+                                          </div>
+                                          <div class="col col-lg-12 col-md-12 mb-4">
+                                                <input type="password" class="form-control" id="password"
+                                                      placeholder="Password (Current)" autocomplete="false">
+                                          </div>
+                                          <div class="col col-lg-12 col-md-12 mb-4">
+                                                <a class="btn btn-outline-danger btn-sm ml-2 float-right"
+                                                      href="dashboard.html">Cancel</a>
+                                                <a class="btn btn-outline-primary btn-sm float-right"
+                                                      href="javascript:updateProfile();">Update</a>
+                                          </div>
+                                    </form>
                               </div>
-
-                              <!-- Content Row -->
-
-                              <!-- Content Row -->
-                              <div class="row">
-
-                                    <!-- Content Column -->
-                                    <div class="col-lg-6 mb-4">
-                                          <!-- Color System -->
-                                          <div class="row">
-                                                <div class="col-lg-6 mb-4">
-                                                      <div class="card bg-primary text-white shadow">
-                                                            <div class="card-body">
-                                                                  Primary
-                                                                  <div class="text-white-50 small">#4e73df</div>
-                                                            </div>
-                                                      </div>
-                                                </div>
-                                                <div class="col-lg-6 mb-4">
-                                                      <div class="card bg-success text-white shadow">
-                                                            <div class="card-body">
-                                                                  Success
-                                                                  <div class="text-white-50 small">#1cc88a</div>
-                                                            </div>
-                                                      </div>
-                                                </div>
-                                                <div class="col-lg-6 mb-4">
-                                                      <div class="card bg-info text-white shadow">
-                                                            <div class="card-body">
-                                                                  Info
-                                                                  <div class="text-white-50 small">#36b9cc</div>
-                                                            </div>
-                                                      </div>
-                                                </div>
-                                                <div class="col-lg-6 mb-4">
-                                                      <div class="card bg-warning text-white shadow">
-                                                            <div class="card-body">
-                                                                  Warning
-                                                                  <div class="text-white-50 small">#f6c23e</div>
-                                                            </div>
-                                                      </div>
-                                                </div>
-                                                <div class="col-lg-6 mb-4">
-                                                      <div class="card bg-danger text-white shadow">
-                                                            <div class="card-body">
-                                                                  Danger
-                                                                  <div class="text-white-50 small">#e74a3b</div>
-                                                            </div>
-                                                      </div>
-                                                </div>
-                                                <div class="col-lg-6 mb-4">
-                                                      <div class="card bg-secondary text-white shadow">
-                                                            <div class="card-body">
-                                                                  Secondary
-                                                                  <div class="text-white-50 small">#858796</div>
-                                                            </div>
-                                                      </div>
-                                                </div>
-                                                <div class="col-lg-6 mb-4">
-                                                      <div class="card bg-light text-black shadow">
-                                                            <div class="card-body">
-                                                                  Light
-                                                                  <div class="text-black-50 small">#f8f9fc</div>
-                                                            </div>
-                                                      </div>
-                                                </div>
-                                                <div class="col-lg-6 mb-4">
-                                                      <div class="card bg-dark text-white shadow">
-                                                            <div class="card-body">
-                                                                  Dark
-                                                                  <div class="text-white-50 small">#5a5c69</div>
-                                                            </div>
-                                                      </div>
-                                                </div>
-                                          </div>
-
-                                    </div>
-
-                              </div>
-                              <!-- End of Main Content -->
-
-                              <!-- Footer -->
-                              <footer class="sticky-footer bg-white">
-                                    <div class="container my-auto">
-                                          <div class="copyright text-center my-auto">
-                                                <span>Copyright &copy; Your Website 2021</span>
-                                          </div>
-                                    </div>
-                              </footer>
-                              <!-- End of Footer -->
-
                         </div>
-                        <!-- End of Content Wrapper -->
+
+
+                        <!-- Footer -->
+                        <footer class="sticky-footer bg-white">
+                              <div class="container my-auto">
+                                    <div class="copyright text-center my-auto">
+                                          <span>Copyright &copy; Your Website 2021</span>
+                                    </div>
+                              </div>
+                        </footer>
+                        <!-- End of Footer -->
 
                   </div>
-                  <!-- End of Page Wrapper -->
+                  <!-- End of Content Wrapper -->
+
             </div>
-
-
-
-            <!-- Logout Modal-->
-            <!-- <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                  aria-hidden="true">
-                  <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                              <div class="modal-header">
-                                    <h5 class="modal-title">Are you sure ?</h5>
-                              </div>
-                              <div class="modal-footer">
-                                    <button class="btn btn-warning" type="button" data-dismiss="modal">Cancel</button>
-                                    <a class="btn btn-primary" onclick="logout();">Confirm</a>
-                              </div>
-                        </div>
-                  </div>
-            </div> -->
-
+            <!-- End of Page Wrapper -->
+      </div>
 </body>
 
 <!-- js link -->
@@ -486,7 +321,7 @@
 <script src="./assets/js/sb-admin-2.min.js" type="text/javascript"></script>
 <script src="./assets/js/script.js" type="text/javascript"></script>
 <script>
-      $("#logoutModal").modal({ backdrop: "static" });
+      $(document).ready(editProfile());
 </script>
 
 </html>

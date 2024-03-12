@@ -5,16 +5,16 @@ let itemsDesign = ["primary", "success", "info", "danger", "warning"];
 $(document).ready(async function () {
       let token = localStorage.getItem("authToken");
       if (!token && !publicPaths.includes(window.location.pathname)) {
-            window.location.href = "/xpense-manager/index.html";
+            core.goToURL("/xpense-manager/index.html");
       }
 
       if (token && publicPaths.includes(window.location.pathname)) {
-            window.location.href = "/xpense-manager/dashboard.html";
+            core.goToURL("/xpense-manager/dashboard.html");
       }
 
       let name = localStorage.getItem("userName");
       if (name) {
-            $("#profileName").html(name);
+            core.setHTML("profileName", name);
       }
 });
 
@@ -48,7 +48,7 @@ function updateLogo(input) {
 
 // Register an user
 async function register() {
-      let name = document.getElementById("name").value;
+      let name = core.getValue("name");
       if (name == "") {
             core.getFlashMsg("WARNING", "Enter valid Name");
             return false;
@@ -59,30 +59,30 @@ async function register() {
             name += element[0].toUpperCase() + element.slice(1);
             name += " ";
       });
-      document.getElementById("name").value = name.trim();
+      core.setValue("name", name.trim());
 
-      let mobile = document.getElementById("mobile").value;
+      let mobile = core.getValue("mobile");
       let isMatch = mobile.match(MOBILE_PATTERN);
       if (isMatch == null) {
             core.getFlashMsg("WARNING", "Enter valid mobile number");
             return false;
       }
 
-      let email = document.getElementById("email").value;
+      let email = core.getValue("email");
       isMatch = email.match(EMAIL_PATTERN);
       if (isMatch == null) {
             core.getFlashMsg("WARNING", "Enter valid EmailID");
             return false;
       }
 
-      let password = document.getElementById("password").value;
+      let password = core.getValue("password");
       isMatch = password.match(PASSWORD_PATTERN);
       if (isMatch == null) {
             core.getFlashMsg("WARNING", "Strong and Valid Password is required");
             return false;
       }
 
-      let confirmPassword = document.getElementById("c-password").value;
+      let confirmPassword = core.getValue("c-password");
       if (password != confirmPassword) {
             core.getFlashMsg("WARNING", "Confirm Password must match to Password");
             return false;
@@ -107,7 +107,14 @@ async function register() {
       let respObj = await core.ajax("/xpense-manager/apis/user/register.php", request, "POST");
       try {
             let response = JSON.parse(respObj);
-            core.getFlashMsg("WARNING", response['message']);
+            if (response['code'] == 0) {
+                  core.getFlashMsg("SUCCESS", response['message']);
+                  setTimeout(() => {
+                        core.goToURL("/xpense-manager/index.html");
+                  }, 2000);
+            } else {
+                  core.getFlashMsg("DANGER", response['message']);
+            }
       } catch {
             core.getFlashMsg("WARNING", "Something went wrong");
       } finally {
@@ -117,13 +124,13 @@ async function register() {
 
 // login an user
 async function login() {
-      let email = document.getElementById("email").value;
+      let email = core.getValue("email");
       if (email == "") {
             core.getFlashMsg("WARNING", "Enter valid EmailID");
             return false;
       }
 
-      let password = document.getElementById("password").value;
+      let password = core.getValue("password");
       if (password == "") {
             core.getFlashMsg("WARNING", "Password is required");
             return false;
@@ -174,7 +181,7 @@ function logout() {
 
 // Search Users
 async function searchUsers() {
-      let searchKey = document.getElementById('userSearch').value;
+      let searchKey = core.getValue('userSearch');
 
       var request = JSON.stringify({
             authorization: localStorage.getItem('authToken'),
@@ -182,7 +189,7 @@ async function searchUsers() {
                   "searchKey": searchKey
             },
             pagination: {
-                  pageSize: 10,
+                  pageSize: 5,
                   currentPage: 1,
                   sortBy: "name",
                   sortOrder: "ASC"
@@ -200,7 +207,7 @@ async function searchUsers() {
                         userTemplate += "<tr><td>" + user.name + "</td><td>" + user.email + "</td><td><i class='fas fa-plus-square' onclick='addUser(`" + user.id + "`);'></i></td><tr>";
                   }
                   userTemplate += "</table>";
-                  document.getElementById('userData').innerHTML = userTemplate;
+                  core.setHTML('userData', userTemplate);
             }
       } catch {
             core.getFlashMsg("WARNING", "Something went wrong");
@@ -231,7 +238,7 @@ async function addUser(userID) {
             core.getFlashMsg("WARNING", "Invalid User details");
             return false;
       }
-      let groupID = document.getElementById("groupId").value;
+      let groupID = core.getValue("groupId");
       if (groupID == "") {
             core.getFlashMsg("WARNING", "Invalid Group");
             return false;
@@ -270,7 +277,7 @@ async function addUser(userID) {
 
 // Display List of Groups
 async function listGroups() {
-      let searchKey = document.getElementById("searchKey").value;
+      let searchKey = core.getValue("searchKey");
 
       var request = JSON.stringify({
             authorization: localStorage.getItem('authToken'),
@@ -297,7 +304,7 @@ async function listGroups() {
                   let groupTemplate = "<div class='col-lg-4 mb-4'><div class='card bg-" + groupDesign + " text-white shadow'><div class='card-body' onclick='groupDetailsDialog(`" + group.id + "`)'>" + group.name + "<div class='text-white-50 small'>" + group.description + "</div></div></div></div>";
                   items += groupTemplate;
             }
-            document.getElementById("listOfGroups").innerHTML = items;
+            core.setHTML("listOfGroups", items);
       } catch {
             core.getFlashMsg("WARNING", "Something went wrong");
       } finally {
@@ -362,12 +369,12 @@ function addGroupDialog() {
 
 // Add Group
 async function addGroup() {
-      let groupName = document.getElementById("groupName").value;
+      let groupName = core.getValue("groupName");
       if (groupName == "") {
             core.getFlashMsg("WARNING", "Enter valid group name");
             return false;
       }
-      let groupDescription = document.getElementById("groupDescription").value;
+      let groupDescription = core.getValue("groupDescription");
       if (groupDescription == "") {
             core.getFlashMsg("WARNING", "Enter valid group description");
             return false;
@@ -400,4 +407,39 @@ async function addGroup() {
       } finally {
             core.atLoader(false);
       }
+}
+
+// Edit Profile Screen
+async function editProfile() {
+      var request = JSON.stringify({
+            authorization: localStorage.getItem('authToken'),
+            data: {
+                  "user": true,
+                  "searchKey": ""
+            },
+            pagination: {
+                  pageSize: 1,
+                  currentPage: 1,
+                  sortBy: "id",
+                  sortOrder: "ASC"
+            }
+      });
+      core.atLoader(true);
+      let respObj = await core.ajax("/xpense-manager/apis/user/search.php?request=" + request);
+      try {
+            let response = JSON.parse(respObj);
+            let userData = response["data"]["0"];
+            core.setValue("name", userData.name);
+            core.setValue("email", userData.email);
+            core.setValue("mobile", userData.mobile);
+      } catch {
+            core.getFlashMsg("WARNING", "Something went wrong");
+      } finally {
+            core.atLoader(false);
+      }
+}
+
+// Profile Update
+async function updateProfile() {
+      console.log("Update Profile");
 }
