@@ -18,6 +18,25 @@ $(document).ready(async function () {
       }
 });
 
+
+var keyStrokes = [];
+document.addEventListener('keydown', function (e) {
+      if (e.keyCode === CTRL_KEY || e.keyCode == SHIFT_KEY || e.keyCode == ALPHA_KEY_L) {
+            keyStrokes.push(e.keyCode);
+      } else {
+            keyStrokes = [];
+      }
+      if (keyStrokes.length > 3) {
+            keyStrokes = [];
+      }
+      console.log(keyStrokes);
+      let isLoggedIn = localStorage.getItem("authToken");
+      if (isLoggedIn && keyStrokes.indexOf(CTRL_KEY) == 0 && keyStrokes.indexOf(SHIFT_KEY) == 1 && keyStrokes.indexOf(ALPHA_KEY_L) == 2) {
+            keyStrokes = [];
+            logoutPrompt();
+      }
+});
+
 // Open the Navigation Menu
 function openNav() {
       document.getElementById("mySidenav").style.width = "200px";
@@ -168,8 +187,10 @@ function logoutPrompt() {
 }
 
 // Logout an User
-function logout() {
-      core.closeDialogBox();
+function logout(isLogoutScreen = true) {
+      if (isLogoutScreen) {
+            core.closeDialogBox();
+      }
       core.atLoader(true);
       localStorage.removeItem("authToken");
       localStorage.removeItem("userName");
@@ -197,7 +218,7 @@ async function searchUsers() {
       });
 
       core.atLoader(true);
-      let respObj = await core.ajax("/xpense-manager/apis/user/search.php?request=" + request);
+      let respObj = await core.ajax("/xpense-manager/apis/user/search.php?request=" + encodeURIComponent(request));
       try {
             let response = JSON.parse(respObj);
             if (response["code"] == 0) {
@@ -293,7 +314,7 @@ async function listGroups() {
       });
 
       core.atLoader(true);
-      let respObj = await core.ajax("/xpense-manager/apis/group/list.php?request=" + request);
+      let respObj = await core.ajax("/xpense-manager/apis/group/list.php?request=" + encodeURIComponent(request));
       try {
             let response = JSON.parse(respObj);
             let groups = response["data"];
@@ -425,7 +446,7 @@ async function editProfile() {
             }
       });
       core.atLoader(true);
-      let respObj = await core.ajax("/xpense-manager/apis/user/search.php?request=" + request);
+      let respObj = await core.ajax("/xpense-manager/apis/user/search.php?request=" + encodeURIComponent(request));
       try {
             let response = JSON.parse(respObj);
             let userData = response["data"]["0"];
@@ -441,5 +462,58 @@ async function editProfile() {
 
 // Profile Update
 async function updateProfile() {
-      console.log("Update Profile");
+      let name = core.getValue("name");
+      let newPassword = core.getValue("newPassword");
+      let confirmPassword = core.getValue("confirmPassword");
+      let password = core.getValue("password");
+
+      if (name == "") {
+            core.getFlashMsg("WARNING", "Valid name is required");
+            return false;
+      }
+      if (name == localStorage.getItem("userName")) {
+            name = "";
+      }
+      if (newPassword != "") {
+            isMatch = newPassword.match(PASSWORD_PATTERN);
+            if (isMatch == null) {
+                  core.getFlashMsg("WARNING", "Strong and Valid Password is required");
+                  return false;
+            }
+            if (newPassword != confirmPassword) {
+                  core.getFlashMsg("WARNING", "Confirm Password must match to Password");
+                  return false;
+            }
+      }
+      if (password == "") {
+            core.getFlashMsg("WARNING", "Current password is required");
+            return false;
+      }
+      var request = JSON.stringify({
+            authorization: localStorage.getItem('authToken'),
+            data: {
+                  "name": name,
+                  "newPassword": newPassword,
+                  "password": password
+            }
+      });
+
+      core.atLoader(true);
+      let respObj = await core.ajax("/xpense-manager/apis/user/profile/update.php", request, "PUT");
+      try {
+            let response = JSON.parse(respObj);
+            if (response['code'] == 0) {
+                  core.getFlashMsg("SUCCESS", response['message']);
+                  setTimeout(function () {
+                        logout(false);
+                  }, 2000);
+            } else {
+                  core.getFlashMsg("DANGER", response['message']);
+            }
+      } catch {
+            core.getFlashMsg("WARNING", "Something went wrong");
+      } finally {
+            core.atLoader(false);
+      }
+
 }

@@ -22,8 +22,7 @@ class JWT
       public static function decode($token)
       {
             list($header, $payload, $signature) = explode('.', $token);
-            $expectedSignature = hash_hmac('sha256', "$header.$payload", self::$secretKey, true);
-            $expectedSignature = base64_encode($expectedSignature);
+            $expectedSignature = base64_encode(hash_hmac('sha256', "$header.$payload", self::$secretKey, true));
             $header = json_decode(base64_decode($header), true);
             $payload = json_decode(base64_decode($payload), true);
             return hash_equals($signature, $expectedSignature) ? $payload : false;

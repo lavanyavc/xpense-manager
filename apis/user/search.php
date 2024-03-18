@@ -32,7 +32,6 @@ if ($user == true) {
 
 $sql = "SELECT `id` ,`name`,`email`, `mobile` FROM `users` " . $where . " ORDER BY $sortBy $sortOrder LIMIT $startIndex, $pageSize";
 $result = $conn->query($sql);
-$response['query'] = $sql;
 if (!empty($result)) {
       $response['code'] = 0;
       $response['message'] = "Success";

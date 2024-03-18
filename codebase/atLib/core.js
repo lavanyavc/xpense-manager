@@ -3,9 +3,12 @@
  * @Author : Kishan Ravindra
  */
 var ENTER_KEY = 13;
+var CTRL_KEY = 17;
+var SHIFT_KEY = 16;
 var ESC_KEY = 27;
 var INSERT_KEY = 45;
 var ALPHA_KEY_I = 73;
+var ALPHA_KEY_L = 76;
 var XHRObj = false;
 var isDebug = true;
 var PARSEERR = "Server response failure.";
